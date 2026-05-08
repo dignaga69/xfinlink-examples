@@ -3,7 +3,7 @@ import xfinlink as xfl
 import pandas as pd
 import numpy as np
 
-xfl.set_api_key("xfl_91cda643688e76bd182665c64ca6aedc")
+xfl.set_api_key("YOUR_API_KEY")
 
 # Pull 3 years of daily returns for 5 stocks + SPY (market proxy)
 tickers = ["AAPL", "NVDA", "XOM", "PG", "JPM", "SPY"]

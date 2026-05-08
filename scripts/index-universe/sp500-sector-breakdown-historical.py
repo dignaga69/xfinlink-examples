@@ -2,7 +2,7 @@
 import xfinlink as xfl
 import pandas as pd
 
-xfl.set_api_key("xfl_91cda643688e76bd182665c64ca6aedc")
+xfl.set_api_key("YOUR_API_KEY")
 
 # Compare S&P 500 sector composition: 2010 vs 2020 vs today
 snapshots = {

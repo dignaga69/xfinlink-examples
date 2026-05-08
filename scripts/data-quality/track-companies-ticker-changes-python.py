@@ -1,7 +1,7 @@
 # Full write-up: https://xfinlink.com/blog/track-companies-ticker-changes-python
 import xfinlink as xfl
 
-xfl.set_api_key("xfl_91cda643688e76bd182665c64ca6aedc")
+xfl.set_api_key("YOUR_API_KEY")
 
 # === Example 1: FB — one ticker, four companies over 50 years ===
 print("=== FB: Ticker Recycling Across 4 Companies ===")

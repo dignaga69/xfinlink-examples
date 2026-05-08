@@ -3,7 +3,7 @@ import xfinlink as xfl
 import pandas as pd
 import numpy as np
 
-xfl.set_api_key("xfl_91cda643688e76bd182665c64ca6aedc")
+xfl.set_api_key("YOUR_API_KEY")
 
 # Pull 1 year of daily prices for 4 stocks across different sectors
 tickers = ["AAPL", "TSLA", "JNJ", "JPM"]
