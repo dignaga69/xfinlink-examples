@@ -1,7 +1,0 @@
-43.9% of the 2010 S&P 500 is gone.
-
-185 companies departed. 200 new entrants. Only 236 survivors.
-
-If your backtest uses today's members on 2010 data, you're only looking at winners.
-
-How to get historical index constituents in Python: [BLOG_LINK]

@@ -1,8 +1,0 @@
-"FB" was used by FOUR different companies:
-
-1971 — BankBoston Corp
-1994 — Falcon Building Products
-1999 — FBR Asset Investment
-2012 — Facebook/Meta
-
-Most data APIs silently mix their data together. Here's how to handle it: [BLOG_LINK]

@@ -1,7 +1,0 @@
-TSLA's annualized volatility is 47% — nearly 3x JNJ's 17%.
-
-That's the spread between a high-beta growth stock and a defensive staple.
-
-Max drawdown? -30% on April 8 during the tariff selloff.
-
-How to calculate it in Python: [BLOG_LINK]
