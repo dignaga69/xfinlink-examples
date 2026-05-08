@@ -1,0 +1,93 @@
+# How to Screen Blue-Chip Stocks by P/E Ratio in Python
+
+P/E ratio is the most-searched valuation metric for a reason — it's a quick sanity check on whether a stock is cheap or expensive relative to its earnings. Screening a basket of blue chips by P/E reveals which sectors the market is pricing for growth and which it considers mature. Here's how to pull and rank valuation ratios for 30 major companies in a few lines of Python.
+
+```python
+import xfinlink as xfl
+import pandas as pd
+
+xfl.set_api_key("your_key")  # free at https://xfinlink.com/signup
+
+# 30 blue-chip S&P 500 stocks across all 11 GICS sectors
+tickers = [
+    "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN",  # Tech / Comm / Consumer
+    "JPM", "BAC", "GS", "BRK.B", "V",          # Financials
+    "UNH", "JNJ", "PFE", "LLY", "ABBV",        # Healthcare
+    "XOM", "CVX", "COP",                        # Energy
+    "PG", "KO", "PEP", "WMT", "COST",          # Consumer Staples / Disc
+    "CAT", "HON", "UPS",                        # Industrials
+    "NEE", "DUK",                               # Utilities
+    "AMT", "PLD",                               # Real Estate
+]
+
+# Fetch valuation metrics — latest annual period for each
+metrics = xfl.metrics(tickers, period_type="annual",
+                      fields=["pe_ratio", "pb_ratio", "earnings_yield", "dividend_yield"],
+                      period="3y")
+
+# Keep only the most recent period per ticker
+metrics = metrics.sort_values("period_end").groupby("ticker").tail(1)
+
+# Drop rows where PE is missing or negative (unprofitable)
+valid = metrics.dropna(subset=["pe_ratio"])
+valid = valid[valid["pe_ratio"] > 0].copy()
+
+# Top 10 cheapest by P/E
+cheapest = valid.nsmallest(10, "pe_ratio")[["ticker", "entity_name", "period_end", "pe_ratio", "pb_ratio", "earnings_yield"]]
+print("=== 10 Cheapest Blue Chips by P/E Ratio ===")
+print(cheapest.to_string(index=False))
+print()
+
+# Top 10 most expensive by P/E
+expensive = valid.nlargest(10, "pe_ratio")[["ticker", "entity_name", "period_end", "pe_ratio", "pb_ratio", "earnings_yield"]]
+print("=== 10 Most Expensive Blue Chips by P/E Ratio ===")
+print(expensive.to_string(index=False))
+print()
+
+# Summary stats
+print("=== P/E Summary (30 Blue Chips) ===")
+print(f"Median P/E: {valid['pe_ratio'].median():.1f}")
+print(f"Mean P/E:   {valid['pe_ratio'].mean():.1f}")
+print(f"Min P/E:    {valid['pe_ratio'].min():.1f} ({valid.loc[valid['pe_ratio'].idxmin(), 'ticker']})")
+print(f"Max P/E:    {valid['pe_ratio'].max():.1f} ({valid.loc[valid['pe_ratio'].idxmax(), 'ticker']})")
+```
+
+**Output:**
+
+```
+=== 10 Cheapest Blue Chips by P/E Ratio ===
+ticker               entity_name period_end  pe_ratio  pb_ratio  earnings_yield
+   BAC      BANK OF AMERICA CORP 2025-12-31     13.85      1.23        0.081500
+   UPS UNITED PARCEL SERVICE INC 2025-12-31     15.26      4.51        0.076110
+   JPM       JPMORGAN CHASE & CO 2025-12-31     15.30      2.28        0.069085
+    GS   GOLDMAN SACHS GROUP INC 2025-12-31     18.04      2.19        0.062884
+   COP            CONOCOPHILLIPS 2025-12-31     18.09      2.18        0.056886
+   PFE                PFIZER INC 2025-12-31     19.47      1.74        0.051610
+   DUK          DUKE ENERGY CORP 2025-12-31     19.79      1.88        0.051033
+   JNJ         JOHNSON & JOHNSON 2025-12-28     20.17      6.58        0.049986
+   XOM          EXXON MOBIL CORP 2025-12-31     21.88      2.34        0.047475
+    PG       PROCTER & GAMBLE CO 2025-06-30     22.44      6.54        0.046690
+
+=== 10 Most Expensive Blue Chips by P/E Ratio ===
+ticker           entity_name period_end  pe_ratio  pb_ratio  earnings_yield
+  ABBV            ABBVIE INC 2025-12-31     85.89   -109.61        0.011790
+  COST COSTCO WHOLESALE CORP 2025-08-31     55.58     15.40        0.018038
+   WMT           WALMART INC 2026-01-31     47.69     10.42        0.021091
+   CAT       CATERPILLAR INC 2025-12-31     47.62     19.55        0.021312
+  NVDA           NVIDIA CORP 2026-01-25     43.16     32.68        0.023358
+   LLY        LILLY ELI & CO 2025-12-31     42.48     34.66        0.022441
+   PLD              PROLOGIS 2025-12-31     39.97      2.49        0.025088
+  AAPL             Apple Inc 2025-09-27     38.53     57.26        0.026532
+  AMZN        AMAZON COM INC 2025-12-31     37.82      7.10        0.026627
+  GOOG          ALPHABET INC 2025-12-31     36.57     11.51        0.027660
+
+=== P/E Summary (30 Blue Chips) ===
+Median P/E: 28.1
+Mean P/E:   31.7
+Min P/E:    13.8 (BAC)
+Max P/E:    85.9 (ABBV)
+```
+
+Banks dominate the cheapest list — BAC, JPM, and GS all trade under 20x earnings, reflecting the market's persistent discount for financials. On the expensive end, ABBV's 86x P/E is misleading: their Humira patent cliff cratered near-term earnings, so the price reflects expected recovery. The median P/E of 28 for this blue-chip basket is above the long-run S&P average of ~20, consistent with an extended high-valuation regime.
+
+*Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

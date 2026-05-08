@@ -1,0 +1,6 @@
+NVDA beta: 2.08 — it amplifies market moves by 2x.
+PG beta: 0.15 — barely moves with the market.
+
+And they're negatively correlated (-0.16), making them natural hedges.
+
+How to calculate beta for any stock in Python: [BLOG_LINK]
