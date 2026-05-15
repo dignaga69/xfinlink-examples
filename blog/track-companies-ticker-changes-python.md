@@ -1,6 +1,16 @@
 # How to Track Companies Through Ticker Changes, Bankruptcies, and Renames in Python
 
-If you've ever pulled historical stock data and gotten weird results for tickers like FB, GM, or DELL, you've hit the ticker recycling problem. The same ticker symbol gets reused by completely different companies over time — "FB" was used by four separate companies before Meta. Most data APIs ignore this entirely, silently mixing data from different companies. Here's how to handle it correctly.
+## What's the question?
+
+A ticker symbol is not a permanent identifier. It is a label assigned by a stock exchange, and exchanges routinely reassign the same symbol to different companies over time. The ticker "FB" has been used by four separate companies since 1971. "GM" maps to two distinct legal entities separated by a bankruptcy. "DELL" was assigned to Dell Inc before its 2013 privatization and then to a different corporate entity, Dell Technologies, upon re-listing in 2018. If a data pipeline treats ticker symbols as stable identifiers, it will silently merge data from unrelated companies into a single time series. How do you detect and resolve these cases?
+
+## The approach
+
+Entity resolution is the process of mapping a ticker symbol to the specific company it represented during a given time period. Each company is assigned a permanent entity_id -- a stable identifier that persists through ticker changes, name changes, and exchange transfers. By resolving a ticker, you can see every company that has ever used that symbol, along with the exact date range each assignment was valid.
+
+Five cases are examined: FB (four companies across five decades), GM (pre- and post-bankruptcy entities), META (the rename destination after Facebook changed its ticker), DELL (privatization and re-listing), and a batch resolution call that demonstrates handling of valid, historical, and nonexistent tickers.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -59,7 +69,7 @@ print(f"  Resolved:   {resolved}")
 print(f"  Unresolved: {unresolved}")
 ```
 
-**Output:**
+## Output
 
 ```
 === FB: Ticker Recycling Across 4 Companies ===
@@ -93,6 +103,16 @@ print(f"  Unresolved: {unresolved}")
   Unresolved: ['ENRON', 'INVALID123']
 ```
 
-The key insight is that a ticker is not an identity — it's a label that gets reassigned. "FB" wasn't just Facebook; it was BankBoston Corp in the 1970s, Falcon Building Products in the 1990s, and FBR Asset Investment in the early 2000s. If you naively pull "FB" historical data without entity resolution, you could be mixing price data from a bank, a manufacturing company, and a social media platform into a single time series. The resolve endpoint gives you the entity_id — a stable identifier that follows the actual company through ticker changes, name changes, and exchange transfers.
+## What this tells us
+
+The FB case demonstrates the most common form of ticker recycling. Four entirely unrelated companies -- a bank (BankBoston), a manufacturer (Falcon Building Products), a financial services firm (FBR Asset Investment), and a social media platform (Meta Platforms) -- all traded under the same symbol at different times. A naive query for "FB" historical prices without date-range filtering would return a composite time series spanning four different businesses across four different industries.
+
+The GM case illustrates how a bankruptcy creates two separate legal entities under the same brand. General Motors Corporation (entity_id 4) ceased trading on June 1, 2009, when it filed for Chapter 11 bankruptcy. General Motors Company (entity_id 5) began trading on November 18, 2010, as a distinct corporate successor. These are different companies with different shareholders, different balance sheets, and different entity identifiers.
+
+The DELL case shows a gap in market data caused by a leveraged buyout (a transaction in which a company is taken private using borrowed funds). Dell Inc was delisted in October 2013 and Dell Technologies re-listed in December 2018. The five-year gap means any continuous price series for "DELL" contains a structural break.
+
+## So what?
+
+Any quantitative workflow that uses ticker symbols as merge keys -- backtesting, factor modeling, screening -- is vulnerable to data contamination from ticker recycling. The entity_id provides a stable identifier that follows the actual company through ticker changes, name changes, and corporate restructurings. When building historical analyses, resolve each ticker to its entity_id first, then scope data queries to the correct entity and date range. If a data source does not support entity resolution, its historical data should be treated as potentially contaminated for any ticker that has existed for more than a decade.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

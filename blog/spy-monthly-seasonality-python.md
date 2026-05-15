@@ -1,6 +1,16 @@
 # Is "Sell in May" Real? SPY Monthly Seasonality Over 10 Years
 
-"Sell in May and go away" is one of the oldest market adages. But does it hold up in recent data? By calculating the average monthly return for SPY over the last 10 years, we can see which months actually deliver and which ones are statistical dead zones. The answer might surprise you.
+## What's the question?
+
+"Sell in May and go away" is one of the oldest adages in equity markets. The claim is simple: returns during the May-through-October period are systematically weaker than during November-through-April, making it rational to exit equities for the summer months. The saying dates back to at least the 1930s and has been cited in academic literature, financial media, and trading desks ever since.
+
+But adages are not evidence. The question is whether recent data supports the pattern, and if so, whether the effect is concentrated in specific months or spread evenly across the "weak" half of the year. By calculating the average monthly return, standard deviation, and win rate (the percentage of years a given month was positive) for SPY over the past 10 years, we can identify which months actually delivered and which were statistical dead zones.
+
+## The approach
+
+We retrieve 10 years of daily SPY price data and compute compound monthly returns by grouping daily returns within each calendar month. For each of the 12 months, we calculate three statistics: the average monthly return, the standard deviation of monthly returns (a measure of consistency), and the win rate. A high win rate with a positive average return indicates a reliably strong month. A negative average return, regardless of win rate, marks a month where the expected outcome is a loss.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -38,7 +48,7 @@ print(f"Best month:  {best} (avg +{avg.loc[best, 'avg_return']:.2%}, wins {avg.l
 print(f"Worst month: {worst} (avg {avg.loc[worst, 'avg_return']:.2%}, wins {avg.loc[worst, 'win_rate']:.0%} of the time)")
 ```
 
-**Output:**
+## Output
 
 ```
 === SPY Monthly Seasonality (10-Year Average) ===
@@ -61,6 +71,16 @@ Best month:  Nov (avg +4.31%, wins 90% of the time)
 Worst month: Sep (avg -1.24%, wins 60% of the time)
 ```
 
-"Sell in May" is wrong — May has actually been positive 91% of the time over the last decade with an average return of +1.7%. The real seasonal pattern: November is the best month (+4.3%, 90% win rate) and September is the worst (-1.2%). July is remarkable: +3.5% average with a 100% win rate — it was positive every single year for 10 years. The months to actually worry about are February, March, and September — the only three with negative average returns.
+## What this tells us
+
+The "Sell in May" thesis does not hold in the most recent decade of data. May itself has been positive 91% of the time with an average return of +1.7%, making it one of the most reliable months of the year. The summer months (June and July) are also strong: June averages +1.9% with a 90% win rate, and July is the most remarkable month in the dataset at +3.5% with a 100% win rate — positive every single year for 10 consecutive years.
+
+The actual seasonal weakness is concentrated in three months: February (-0.4%), March (-0.9%), and September (-1.2%). These are the only months with negative average returns. September is the worst, consistent with the well-documented "September effect" observed across decades of market data.
+
+November is the single best month at +4.3% with a 90% win rate, and its low standard deviation (0.0369) relative to its mean indicates that the result is consistent rather than driven by a few outlier years.
+
+## So what?
+
+Seasonal patterns are descriptive, not predictive. A 10-year sample is too small for statistical significance on any individual month, and the composition of the S&P 500 changes materially over a decade. That said, the data directly contradicts the "Sell in May" narrative for this period. If anything, the weakest seasonal window is late winter (February-March) and early fall (September), not the summer months. Investors relying on calendar-based timing rules should test them against actual data before acting — and this analysis demonstrates how to do that in a few lines of code.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

@@ -1,6 +1,14 @@
 # How to Build a Multi-Endpoint Financial Dashboard in Python
 
-Real analysis needs multiple data sources. Here's a pipeline combining index composition, prices, fundamentals, and metrics into one dashboard.
+## What's the question?
+
+Can we combine index composition, price history, fundamental data, and valuation metrics into a single unified view of a stock — and do so without introducing survivorship bias? Real financial analysis rarely depends on a single data type. Understanding a company requires prices (what the market thinks), fundamentals (what the company earns and owns), and metrics (how the market values those earnings). Building a pipeline that joins all three against a point-in-time index membership list ensures that the analysis reflects what was actually investable on a given date, not a retroactively curated universe.
+
+## The approach
+
+The pipeline operates in four steps. First, we retrieve the S&P 500 constituent list as of January 1, 2020, using the `as_of` parameter to get point-in-time composition. This prevents survivorship bias — the systematic error of testing only on companies that survived to the present. Second, we confirm that our 10 target stocks were members of the 2020 index. Third, we pull one year of daily price data and compute 1-year total returns by compounding daily returns. Fourth, we join the price-derived returns with annual fundamentals (revenue) and metrics (PE ratio, ROE) from the most recent filing period.
+
+The result is a single table combining market-based return data with accounting-based fundamental data, anchored to historically accurate index membership.
 
 ## Code
 
@@ -29,14 +37,16 @@ Step 4-5: Combined
   CRM    1y=-35.6%  rev=  $38B  PE= 27.9  ROE= 10.1%
 ```
 
-## Discussion
+## What this tells us
 
-AAPL leads with +47.4% one-year return. Note AAPL ROE of 152% and HD ROE of 111% -- both are real but inflated by negative/tiny book equity from aggressive buybacks, not operating performance.
+AAPL leads the group with a +47.4% one-year return. Its ROE of 151.9% is mathematically correct but requires context: Apple has reduced its book equity to approximately $62B through sustained share buybacks, so net income of $112B divided by that small equity base produces an extreme ratio. HD exhibits the same phenomenon at 110.5% ROE. In both cases, the elevated ROE reflects capital structure decisions (returning capital to shareholders) rather than superior operating efficiency. For cross-company comparisons, return on invested capital (ROIC) would provide a more meaningful profitability measure.
 
-JPM at 15x PE and 15.7% ROE is the classic value play. CRM is the worst performer at -35.6% despite reasonable PE (27.9), suggesting the market is pricing in growth deceleration.
+JPM at 15x PE and 15.7% ROE represents a conventional value profile — moderate valuation with solid but not extreme profitability. CRM is the worst performer at -35.6% despite a reasonable PE of 27.9, suggesting the market is pricing in deceleration in Salesforce's revenue growth rather than responding to current-period fundamentals.
 
-The pipeline demonstrates how point-in-time index data prevents survivorship bias.
+The pipeline confirms that all 10 stocks were S&P 500 members as of January 2020, validating the analysis against historically accurate composition data.
 
----
+## So what?
 
-Built with [xfinlink](https://xfinlink.com) -- free financial data API for US equities. No credit card, no rate limits.
+Multi-endpoint pipelines are the foundation of systematic investment research. Combining price, fundamental, and metric data into a single view enables comparisons that no single data type can support — for example, identifying stocks with strong returns but deteriorating fundamentals, or stocks with low valuations and improving profitability. The point-in-time index membership check is the critical first step: without it, any historical analysis is contaminated by survivorship bias, producing performance estimates that overstate what a real investor would have experienced.
+
+*Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

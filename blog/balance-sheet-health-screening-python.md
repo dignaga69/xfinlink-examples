@@ -1,6 +1,14 @@
 # How to Screen Stocks by Balance Sheet Health in Python
 
-A stock can have great earnings and still go bankrupt if it can't pay its bills. The balance sheet tells you whether a company can survive a downturn — current ratio measures short-term liquidity, debt-to-equity measures leverage, and interest coverage tells you how easily it can service its debt. Here's how to screen 10 major stocks for financial health.
+## What's the question?
+
+Strong earnings do not guarantee financial survival. A company can report record profits and still face insolvency if its short-term obligations exceed its liquid assets or if its debt burden becomes unserviceable during an economic contraction. The balance sheet quantifies these risks through three categories of ratios: liquidity ratios (current ratio, quick ratio) measure the ability to pay bills due within one year, leverage ratios (debt-to-equity, debt-to-assets) measure how heavily the company depends on borrowed capital, and interest coverage (operating income divided by interest expense) measures how many times over the company can meet its debt service obligations from current earnings. Among ten major U.S. equities, which carry the strongest balance sheets and which show signs of financial strain?
+
+## The approach
+
+The xfinlink metrics endpoint retrieves precomputed balance sheet ratios for a batch of tickers in a single call. The most recent annual period for each company is extracted and presented in two views: a liquidity ranking sorted by current ratio, and a leverage ranking sorted by debt-to-equity. A watch list applies two standard credit analysis thresholds to flag elevated risk: a current ratio below 1.0 (meaning current liabilities exceed current assets) or a debt-to-equity ratio above 2.0 (indicating the company has borrowed more than twice its equity base). The screen covers ten stocks across technology, financials, healthcare, energy, and telecommunications to ensure sector diversity.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -40,7 +48,7 @@ else:
     print("  All clear")
 ```
 
-**Output:**
+## Output
 
 ```
 === Balance Sheet Health: Liquidity Ratios ===
@@ -74,6 +82,16 @@ ticker         entity_name  debt_to_equity  debt_to_assets  interest_coverage
   AAPL: current_ratio=0.89
 ```
 
-The surprise is Apple: it has the second-worst balance sheet in this group with a current ratio below 1 (0.89) and the highest debt-to-equity (1.17). This is by design — Apple deliberately runs a leveraged balance sheet because its cash flow is so predictable that it doesn't need liquidity buffers. AT&T is the other flag with a current ratio of 0.91 and interest coverage of only 3.5x — much less margin for error. On the other end, TSLA has the cleanest balance sheet: lowest debt-to-equity at 0.10 and a 2.16 current ratio, reflecting its decision to fund growth from operations rather than debt.
+## What this tells us
 
-*Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*
+Two companies trigger the watch list, and they illustrate the critical distinction between voluntary and involuntary balance sheet weakness. Apple carries the highest debt-to-equity ratio in the group (1.17) and a current ratio of 0.89, both of which would ordinarily signal concern. However, Apple generates approximately $100 billion in annual operating cash flow, which renders traditional liquidity thresholds less informative. The company deliberately maintains a leveraged balance sheet to fund share repurchases at a cost of debt lower than its cost of equity -- a rational capital allocation decision for a business with highly predictable revenue.
+
+AT&T presents a materially different risk profile. Its current ratio of 0.91 is paired with interest coverage of only 3.6x, the lowest in the group by a substantial margin. At that level, a moderate decline in operating income could impair the company's ability to service its debt without asset sales or refinancing. The combination of thin liquidity and constrained interest coverage represents genuine balance sheet stress rather than a deliberate capital structure choice.
+
+On the opposite end, Tesla maintains the most conservative balance sheet with a debt-to-equity ratio of 0.10, funded primarily through equity and retained earnings. Alphabet records interest coverage of 175x, a level at which debt obligations are effectively immaterial to financial health.
+
+## So what?
+
+Balance sheet analysis provides information that income statement metrics cannot: whether a company can withstand adverse conditions without external financing. The distinction between Apple and AT&T demonstrates that identical ratio thresholds can signal entirely different risk levels depending on cash flow predictability and debt service capacity. When screening for financial health, interest coverage is the most discriminating single metric -- companies above 10x have substantial margin for error, while those below 5x require careful examination of their debt maturity schedules and refinancing options.
+
+*Built with [xfinlink](https://xfinlink.com) -- free financial data API for Python. `pip install xfinlink`*

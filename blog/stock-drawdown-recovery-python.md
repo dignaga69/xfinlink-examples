@@ -1,6 +1,16 @@
 # How to Calculate Max Drawdown and Recovery Time for Any Stock in Python
 
-Max drawdown is the single best measure of downside risk — it tells you the worst peak-to-trough decline a stock experienced over a given period. Combined with recovery time, it answers the question every investor actually cares about: "If I bought at the worst possible moment, how bad would it get and how long until I'm whole again?" Here's how to calculate both for growth vs defensive stocks.
+## What's the question?
+
+Standard volatility measures treat upside and downside risk symmetrically, but investors experience them differently. A 20% gain and a 20% loss have asymmetric consequences: the loss requires a 25% subsequent gain just to break even. Maximum drawdown -- the largest peak-to-trough decline in a stock's price over a given period -- captures the worst-case loss scenario an investor would have experienced. Combined with recovery time (the number of days from the trough back to the previous peak), it answers a concrete question: if you bought at the worst possible moment, how severe was the loss and how long did it take to recover?
+
+## The approach
+
+For each stock, we compute the running cumulative maximum of the closing price, then calculate the drawdown at each date as the percentage difference between the current price and the cumulative maximum. The minimum drawdown value represents the maximum drawdown. Recovery time is measured as the number of calendar days from the drawdown trough until the stock first reaches or exceeds its previous peak.
+
+Six stocks are divided into two groups -- growth (NVDA, TSLA, AAPL) and defensive (JNJ, PG, KO) -- to test whether the conventional wisdom holds that defensive stocks experience shallower drawdowns and faster recoveries.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -56,7 +66,7 @@ print(f"Defensive avg max drawdown: {d_avg:.1%}")
 print(f"Growth stocks drew down {abs(g_avg / d_avg):.1f}x more than defensive stocks")
 ```
 
-**Output:**
+## Output
 
 ```
 === 1-Year Drawdown Analysis: Growth vs Defensive ===
@@ -73,6 +83,16 @@ Defensive avg max drawdown: -12.8%
 Growth stocks drew down 1.7x more than defensive stocks
 ```
 
-Growth stocks averaged a -21.3% max drawdown vs -12.8% for defensives — about 1.7x worse. TSLA's -29.9% drawdown from April 8 still hasn't recovered, while AAPL bounced back to its highs in just 37 days. The surprise is PG: usually the textbook "safe" stock, but it's down -18.7% from its January high and still hasn't recovered — worse than NVDA's -20.2%, which recovered in 25 days. Drawdown analysis often reveals that "safe" stocks aren't always safe, and "risky" stocks sometimes recover faster than you'd expect.
+## What this tells us
+
+On average, the growth stocks experienced drawdowns 1.7 times deeper than the defensive stocks (-21.3% versus -12.8%), which aligns with the conventional relationship between beta and downside risk. However, the individual cases reveal more nuance.
+
+TSLA's -29.9% drawdown from April 8 remains unrecovered, while NVDA's -20.2% drawdown recovered in just 25 days. The difference in recovery speed between two high-beta stocks reflects the market's differing assessments of their fundamental trajectories rather than their risk profiles alone.
+
+PG presents the most instructive case. Typically classified as a defensive stock, it experienced a -18.7% drawdown from its January high that has not yet recovered. This drawdown is nearly as severe as NVDA's (-20.2%), which did recover. The result demonstrates that sector classification is not a guarantee of downside protection in any specific period. Defensive stocks tend to draw down less on average, but individual defensive names can experience drawdowns comparable to growth stocks during periods of sector rotation or company-specific headwinds.
+
+## So what?
+
+Maximum drawdown is a more intuitive risk metric than volatility for evaluating the investor experience, because it measures the actual worst-case loss rather than a statistical average of daily moves. When constructing a portfolio, pair drawdown analysis with recovery time to understand the full risk profile: a deep drawdown that recovers in 25 days (NVDA) has different practical implications than a moderate drawdown that persists for months (PG). Position sizing based on historical maximum drawdown, rather than volatility alone, produces portfolios that are better calibrated to the losses an investor will actually face.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

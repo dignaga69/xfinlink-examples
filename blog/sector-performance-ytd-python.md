@@ -1,6 +1,14 @@
 # How to Compare Sector Performance YTD Using Python
 
-Sector rotation is one of the most reliable macro signals — when money flows from defensives into cyclicals (or vice versa), it tells you what the market thinks about the economy. By tracking YTD returns across all 11 GICS sectors via SPDR ETFs, you can see where the market is allocating capital right now.
+## What's the question?
+
+Where is capital flowing across equity sectors this year? Sector rotation — the movement of investment capital from one industry group to another — is one of the most reliable indicators of the market's macroeconomic consensus. When money moves from defensive sectors (utilities, consumer staples) into cyclicals (energy, industrials), it signals expectations of economic expansion. The reverse signals caution. Tracking year-to-date returns across all 11 GICS sectors quantifies this rotation in real time.
+
+## The approach
+
+Each GICS sector (Global Industry Classification Standard, the taxonomy used by S&P and MSCI) is represented by its corresponding SPDR ETF. We retrieve year-to-date daily returns for all 11 sector ETFs, compound the daily returns into a single YTD total return per sector, and calculate annualized volatility (daily standard deviation multiplied by the square root of 252 trading days). The spread between the best and worst sectors measures dispersion — a wide spread indicates strong sector rotation rather than a uniform market move.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -40,7 +48,7 @@ print(f"Best:  {ytd.iloc[0]['sector']} ({ytd.index[0]}) at {ytd.iloc[0]['ytd_ret
 print(f"Worst: {ytd.iloc[-1]['sector']} ({ytd.index[-1]}) at {ytd.iloc[-1]['ytd_return']:+.1%}")
 ```
 
-**Output:**
+## Output
 
 ```
 === Sector Performance YTD (via SPDR ETFs) ===
@@ -61,6 +69,14 @@ Best:  Energy (XLE) at +24.6%
 Worst: Health Care (XLV) at -7.3%
 ```
 
-The 31.9% spread between the best and worst sectors is enormous — simply being in the right sector mattered more than stock selection this year. Energy leads at +24.6%, likely driven by commodity price strength, while Health Care trails at -7.3%, weighed down by regulatory uncertainty and patent cliffs. The interesting signal is Consumer Discretionary at near-zero (+0.7%) — this is the sector most sensitive to consumer spending, and its flat performance suggests the market sees neither boom nor recession ahead.
+## What this tells us
+
+The 31.9% spread between the best and worst sectors is substantial. Being in the right sector has mattered more than stock selection within a sector this year. Energy leads at +24.6%, driven by commodity price strength, while Health Care trails at -7.3%, weighed down by regulatory uncertainty and patent expiration timelines.
+
+Consumer Discretionary at near-zero (+0.7%) is a notable data point. This sector is the most sensitive to consumer spending, and its flat performance suggests the market sees neither acceleration nor contraction in household demand.
+
+## So what?
+
+Sector-level return and volatility data provides a concise view of the market's macro positioning. A wide spread confirms that sector allocation is currently a primary driver of portfolio outcomes. Investors benchmarking against broad indices should understand whether their performance gap stems from stock selection or sector exposure — this screen answers that question directly.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

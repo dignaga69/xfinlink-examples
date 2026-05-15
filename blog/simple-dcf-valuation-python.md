@@ -1,6 +1,22 @@
 # How to Build a Simple DCF Model for Any Stock in Python
 
-A discounted cash flow model is the foundation of intrinsic value investing — it estimates what a company is worth based on its future cash flows, discounted back to today. The catch: even small changes in growth rate or discount rate dramatically change the result. Here's a simple 5-year DCF with a terminal value for 6 mega-cap tech stocks, and why the results might surprise you.
+## What's the question?
+
+What is a company worth based on its future cash flows? A discounted cash flow (DCF) model is the foundational framework of intrinsic value investing. It estimates enterprise value by projecting future free cash flows and discounting them to their present value using a required rate of return. The model answers a specific question: given a set of assumptions about growth, profitability, and risk, what price should a rational investor pay today?
+
+The critical limitation of DCF analysis is its sensitivity to assumptions. Small changes in the growth rate or discount rate produce large changes in the resulting valuation. This exercise applies a simple 5-year DCF with a terminal value to six mega-cap technology stocks, deliberately using conservative uniform assumptions to illustrate how and why the model breaks down at current market valuations.
+
+## The approach
+
+The model has three components:
+
+- **Projection period (years 1-5):** Starting from the most recent annual free cash flow (FCF), defined as operating cash flow minus capital expenditures, we grow FCF at a constant 10% annual rate and discount each year's projected FCF back to present value at a 10% discount rate.
+- **Terminal value:** At the end of year 5, we estimate the company's value in perpetuity using the Gordon Growth Model: `terminal FCF / (discount rate - terminal growth rate)`, where terminal growth is set at 3% (roughly nominal GDP growth). This terminal value is also discounted to present value.
+- **Intrinsic value per share:** The sum of discounted projected FCFs and discounted terminal value, divided by shares outstanding.
+
+All six companies use identical assumptions (10% growth, 10% discount rate, 3% terminal growth) to produce an apples-to-apples comparison. The resulting intrinsic value is compared to the current market price to calculate implied upside or downside.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -54,7 +70,7 @@ for _, r in rdf.iterrows():
     print(f"  {r['ticker']:5s}  FCF=${r['fcf_M']/1e3:.0f}B  intrinsic=${r['intrinsic']:.2f}  price=${r['price']:.2f}  upside={up}  {verdict}")
 ```
 
-**Output:**
+## Output
 
 ```
 === Simple DCF Valuation (10% discount, 10% growth, 3% terminal) ===
@@ -66,6 +82,18 @@ for _, r in rdf.iterrows():
   AMZN   FCF=$8B  intrinsic=$14.10  price=$268.99  upside=-94.8%  OVERVALUED
 ```
 
-Every stock is "overvalued" — and that's the point. A naive DCF with 10% growth and 10% discount rate can't justify current mega-cap tech valuations. The market is pricing in 20-30% annual FCF growth for these companies, not 10%. AMZN looks worst at -95%, and the number is real: Amazon's FCF dropped from $33B in 2024 to just $8B in 2025 because capital expenditure surged from $83B to $132B — almost entirely AI and data center investment. Operating cash flow actually *increased* to $140B, but the capex ate nearly all of it. A FCF-based DCF treats this reinvestment as a permanent state, which massively undervalues Amazon's growth option. This exercise shows why DCF assumptions matter more than the model — change the growth rate from 10% to 20% and these valuations flip from "overvalued" to "fairly valued."
+## What this tells us
+
+Every stock appears "overvalued" under these assumptions, and that outcome is the central lesson of the exercise. A naive DCF with 10% growth and a 10% discount rate cannot justify current mega-cap technology valuations. The market is implicitly pricing in 20-30% annual FCF growth for these companies — far above the 10% assumed here.
+
+AMZN produces the most extreme result at -94.8% implied downside, but the number reflects a specific circumstance: Amazon's free cash flow dropped from $33B in 2024 to approximately $8B in 2025 because capital expenditures surged from $83B to $132B, driven almost entirely by AI infrastructure and data center investment. Operating cash flow actually increased to $140B, but the capex consumed nearly all of it. A FCF-based DCF treats this elevated investment as a permanent state, which dramatically undervalues Amazon's growth option — the future cash flows that the current investment is building.
+
+META is absent from the output because its FCF was negative or the data did not meet the filter criteria, illustrating another limitation: DCF models require positive starting FCF, which excludes companies in heavy investment phases.
+
+The model also highlights the dominance of the terminal value. In a standard 5-year DCF with 3% terminal growth, the terminal value typically accounts for 70-80% of total enterprise value. This means the valuation is overwhelmingly determined by long-run assumptions rather than near-term projections — a structural sensitivity that applies to all DCF models.
+
+## So what?
+
+DCF analysis is a framework for testing assumptions, not a price prediction tool. The value of this exercise is not the specific dollar figures but the implied growth rates they reveal. If the market prices NVDA at $219 and your DCF says $78, the market is pricing in growth far above 10% — and the question becomes whether you agree with the market's implicit growth assumption or not. Changing the growth rate from 10% to 20% would flip most of these valuations from "overvalued" to "fairly valued." The model's power lies in making these embedded assumptions explicit and testable.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

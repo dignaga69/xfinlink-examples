@@ -1,6 +1,16 @@
 # Why Ticker Symbols Are Unreliable: The Recycling Problem Every Quant Should Know
 
-Most financial data APIs treat ticker symbols as stable identifiers. They're not. "FB" has been assigned to four completely different companies since 1971. "GM" maps to two separate legal entities across a bankruptcy. If you build a backtest on raw ticker data, you could be mixing banks with social media companies in the same time series — and your code wouldn't raise a single error. Here's how to detect and handle this.
+## What's the question?
+
+Ticker symbols are the most visible identifiers in financial markets, but they are also among the least reliable. A ticker is not a permanent label for a company; it is a temporary assignment by a stock exchange that can be revoked, reassigned, or recycled at any time. The symbol "FB" has been assigned to four completely different companies since 1971. "GM" maps to two separate legal entities on either side of a bankruptcy filing. If a quantitative analysis uses ticker symbols as the primary key for joining or filtering data, it risks silently combining price, fundamental, and reference data from unrelated companies into a single record -- and no error will be raised because the join key matches. How widespread is this problem, and what does a correct solution look like?
+
+## The approach
+
+We examine four tickers with documented recycling histories: FB (four companies across five decades), DELL (two entities separated by a privatization), GM (two entities separated by a bankruptcy), and TWX (two entities with overlapping usage). For each ticker, the resolve endpoint returns every company that has ever used that symbol, along with the exact date range of each assignment and a permanent entity_id.
+
+To demonstrate the practical consequence, we show what happens when a naive data pull for "FB" is issued without entity resolution, then contrast it with a scoped query that uses date-range filtering to retrieve only Meta Platforms' price data.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -46,7 +56,7 @@ else:
     print("(No data — FB ticker was Meta in this range, entity resolution applied)")
 ```
 
-**Output:**
+## Output
 
 ```
 === Ticker Recycling: One Symbol, Multiple Companies ===
@@ -99,6 +109,18 @@ ticker        entity_name       date     close
     FB Meta Platforms Inc 2021-01-08 267.57001
 ```
 
-The `entity_id` is what makes this safe — xfinlink returns 809 for BankBoston, 17829 for Falcon Building Products, 28677 for FBR Asset Investment, and 2 for Meta Platforms. When you pull prices for "FB" in the 2021 date range, entity resolution ensures you only get Meta's data, not a stitched-together Frankenstein time series. The same pattern applies to DELL (Dell Inc went private in 2013, Dell Technologies re-listed in 2018 as a separate entity) and GM (old GM was liquidated in bankruptcy, new GM is a different company). If your data vendor doesn't have entity resolution, your backtests have a hidden data integrity problem.
+## What this tells us
+
+The four tickers examined expose distinct categories of recycling risk. FB represents pure recycling: four companies in four different industries (banking, manufacturing, financial services, and social media) shared the same two-character symbol across non-overlapping time periods. A naive data query would stitch together price data from a 1970s bank and a 2010s social media company into a single time series, producing a return calculation that is arithmetically correct but economically meaningless.
+
+GM illustrates the bankruptcy discontinuity problem. General Motors Corporation (entity_id 4) was liquidated in 2009. General Motors Company (entity_id 5) is a different legal entity with different shareholders, a different capital structure, and a different balance sheet. The ticker is the same, but the underlying company is not. Treating pre-2009 and post-2010 GM data as a continuous series introduces a structural break that distorts any long-horizon return or risk calculation.
+
+DELL shows the privatization gap. Dell Inc was delisted in October 2013 and Dell Technologies re-listed in December 2018. The five-year gap during which no "DELL" traded means any data vendor that fills gaps by interpolation or carries forward stale data will produce fabricated returns for a period when the stock did not exist in public markets.
+
+TWX presents an overlapping usage case, where Time Warner and AOL both used the ticker during partially overlapping periods following their merger and subsequent separation. This creates ambiguity that can only be resolved by examining the entity_id and validity dates.
+
+## So what?
+
+Ticker recycling is not an edge case affecting obscure securities. It occurs regularly in the large-cap universe, affecting household names like Facebook, General Motors, and Dell. Any data pipeline, backtest, or analytical workflow that uses ticker symbols as merge keys without entity resolution is vulnerable to data contamination. The entity_id provides the solution: a permanent identifier assigned to each distinct legal entity that persists through ticker changes, name changes, and exchange transfers. When building historical analyses, the correct pattern is to resolve each ticker to its entity_id first, then scope all subsequent data queries to the entity rather than the symbol. If a data source does not support entity resolution, every long-horizon query should be audited for recycling contamination.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

@@ -1,6 +1,12 @@
 # How to Compare Volatility Across Energy Stocks in Python
 
-Energy stocks are among the most volatile sectors. Understanding each company's risk profile -- annualized vol, rolling vol, and max drawdown -- helps build better energy portfolios.
+## What's the question?
+
+How does risk differ among major energy companies, and is recent volatility consistent with the longer-term pattern? Energy stocks are among the most volatile in the equity market, driven by commodity price fluctuations, geopolitical events, and capital expenditure cycles. But "energy" is not monolithic — an integrated major like Exxon Mobil behaves differently from an oilfield services company like Schlumberger or a refiner like Marathon Petroleum. Quantifying each company's volatility profile identifies the defensive and aggressive options within the sector.
+
+## The approach
+
+We calculate three risk metrics for six major energy companies over a one-year window. Annualized volatility is the standard deviation of daily returns multiplied by the square root of 252 (the typical number of trading days per year), representing the expected range of annual returns under normal conditions. The 30-day rolling volatility provides a snapshot of recent risk levels, which may diverge from the annual figure during periods of elevated uncertainty. Maximum drawdown — the largest peak-to-trough decline during the period — measures the worst-case experienced loss. Together, these three metrics characterize each stock's risk profile from different angles.
 
 ## Code
 
@@ -20,14 +26,16 @@ See [`energy-sector-volatility-python.py`](energy-sector-volatility-python.py)
 Sector avg volatility: 27.6%
 ```
 
-## Discussion
+## What this tells us
 
-All 6 energy stocks are positive over 1 year -- a strong sector tailwind. MPC delivered the best return (+67.3%) but also had the deepest drawdown (-18.7%).
+All six energy stocks posted positive one-year returns, reflecting a broad sector tailwind. However, the risk profiles differ substantially. MPC delivered the highest return (+67.3%) but also suffered the deepest drawdown (-18.7%), and its 30-day rolling volatility of 41.7% is significantly elevated relative to its annual average of 31.4%. This divergence indicates heightened near-term uncertainty — the recent trading environment for MPC has been materially more volatile than the past year on average.
 
-The interesting signal is the 30-day rolling vol: MPC's recent vol (41.7%) is significantly higher than its annual average (31.4%), suggesting elevated near-term uncertainty. CVX has the lowest vol at 21.8% -- the defensive play within energy.
+CVX sits at the opposite end of the spectrum with the lowest annualized volatility (21.8%) and the shallowest drawdown (-14.0%), making it the defensive option within the energy sector. SLB, as an oilfield services company with more cyclical revenue tied to upstream drilling activity, has the highest annualized volatility at 33.4%.
 
-The sector average of 27.6% is notably higher than the S&P 500's typical 15-18%, confirming energy's reputation as a high-beta sector.
+The sector average volatility of 27.6% is notably higher than the S&P 500's typical range of 15-18%, confirming energy's higher-beta characteristics relative to the broad market.
 
----
+## So what?
 
-Built with [xfinlink](https://xfinlink.com) -- free financial data API for US equities. No credit card, no rate limits.
+Volatility profiling within a sector enables informed position sizing. An investor with a fixed risk budget can hold a larger position in CVX than in SLB while maintaining the same portfolio-level risk contribution. The divergence between annualized and 30-day rolling volatility is also actionable: when recent volatility exceeds the annual average (as with MPC), it signals a regime shift that may warrant hedging or position reduction regardless of the fundamental outlook.
+
+*Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

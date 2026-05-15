@@ -1,6 +1,12 @@
 # How to Rank Large-Cap Stocks by Momentum in Python
 
-Momentum is the most documented factor anomaly. Ranking by trailing returns shows which stocks are running hot and which are lagging.
+## What's the question?
+
+Which large-cap stocks have the strongest recent price trends, and are those trends accelerating or fading? Momentum — the tendency of stocks that have performed well recently to continue performing well, and vice versa — is the most extensively documented factor anomaly in academic finance. Jegadeesh and Titman's 1993 paper demonstrated that buying recent winners and selling recent losers produces excess returns over 3-to-12-month horizons. Ranking large caps by trailing returns across multiple time frames reveals not only which stocks are running hot but also whether the underlying trend is strengthening or deteriorating.
+
+## The approach
+
+We compute total returns over three overlapping time horizons — 6 months, 3 months, and 1 month — for 15 large-cap stocks across technology, healthcare, financials, energy, and consumer sectors. Comparing returns across these windows reveals momentum structure. A stock with strong 6-month and 3-month returns but a weak 1-month return may be losing momentum. Conversely, a stock with weak 6-month returns but a strong 1-month return may be at the beginning of a recovery. The 3-month return serves as the primary ranking criterion, representing the intermediate-term trend most commonly used in momentum strategies.
 
 ## Code
 
@@ -27,12 +33,16 @@ See [`momentum-large-cap-screen-python.py`](momentum-large-cap-screen-python.py)
   HD     $  311.40  6mo=-15.9%  3mo=-18.3%  1mo= -7.7%
 ```
 
-## Discussion
+## What this tells us
 
-UNH leads at +39.4% over 3 months. The 57.7% spread between UNH (+39.4%) and HD (-18.3%) shows massive dispersion even among large caps.
+UNH leads with +39.4% over 3 months, producing a 57.7 percentage point spread between the best and worst performers (UNH at +39.4% versus HD at -18.3%). This degree of dispersion within a universe of exclusively large-cap names is substantial and indicates that momentum signals are generating meaningful differentiation even among the most liquid, widely followed stocks.
 
-XOM is interesting: strongest 6-month return (+26.6%) but negative over 3 months (-1.0%), meaning it peaked early and has been fading. MSFT shows the opposite pattern: -18.4% over 6 months but +11.3% in the last month -- a potential recovery signal.
+XOM presents an instructive divergence across time frames: it has the strongest 6-month return (+26.6%) but a negative 3-month return (-1.0%) and a negative 1-month return (-1.9%). This pattern — strong long-term momentum with fading short-term performance — indicates a trend that has peaked and is now decelerating. MSFT shows the opposite pattern: -18.4% over 6 months but +11.3% in the most recent month, consistent with a potential trend reversal and early-stage recovery.
 
----
+CRM exhibits a similar reversal signature with its 1-month return (+7.6%) sharply contrasting its 6-month return (-26.6%), suggesting that selling pressure may be exhausting.
 
-Built with [xfinlink](https://xfinlink.com) -- free financial data API for US equities. No credit card, no rate limits.
+## So what?
+
+Momentum rankings are diagnostic, not prescriptive. The academic literature shows that momentum strategies generate excess returns on average but are subject to occasional sharp reversals (momentum crashes). The multi-timeframe view presented here adds information beyond a single-horizon ranking by revealing trend structure — whether momentum is accelerating, stable, or fading. Portfolio managers use this information to time position entry and exit, while risk managers use it to identify crowded trades where multiple momentum signals converge on the same names.
+
+*Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

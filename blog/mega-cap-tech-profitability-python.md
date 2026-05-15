@@ -1,6 +1,18 @@
 # How to Compare Profitability Across Mega-Cap Tech Stocks in Python
 
-Not all tech companies are equally profitable. NVDA prints a 56% net margin while AMZN barely clears 10%. Understanding the margin structure — where the money goes between gross profit and net income — reveals which companies have real pricing power and which are spending heavily to grow. Here's how to rank the Magnificent Six by margins, ROE, and ROIC.
+## What's the question?
+
+The six largest technology companies by market capitalization -- Apple, Microsoft, Alphabet, Meta, Amazon, and NVIDIA -- are often grouped together, but their profitability structures are fundamentally different. NVIDIA converts 56% of its revenue into net income, while Amazon converts just 11%. The gap between gross margin and net margin reveals where money is consumed between the top line and the bottom line: operating expenses, research and development, sales and marketing, taxes, and interest. Which of these companies have genuine pricing power, and which are investing heavily at the expense of current profitability?
+
+## The approach
+
+Three margin metrics provide the profitability waterfall. Gross margin (revenue minus cost of goods sold, divided by revenue) measures pricing power and production efficiency. Operating margin (operating income divided by revenue) shows what remains after operating expenses. Net margin (net income divided by revenue) is the final measure of profitability after all expenses, taxes, and interest.
+
+The spread between gross margin and net margin -- which we term overhead absorption -- quantifies how much of the initial pricing advantage is consumed by the company's cost structure. A company with high gross margin but low net margin is spending heavily on activities between production and the bottom line.
+
+Two capital efficiency metrics complement the margin analysis: return on equity (ROE, net income divided by shareholders' equity) and return on invested capital (ROIC, a measure of how efficiently a company generates returns on all capital deployed, including debt).
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -39,7 +51,7 @@ for _, row in spread.iterrows():
     print(f"  {row['ticker']:5s}  gross={row['gross_margin']:.1%}  net={row['net_margin']:.1%}  overhead={row['margin_spread']:.1%}")
 ```
 
-**Output:**
+## Output
 
 ```
 === Mega-Cap Tech Profitability (Most Recent Annual) ===
@@ -69,6 +81,16 @@ ticker        entity_name     roic
   META   gross=82.0%  net=30.1%  overhead=51.9%
 ```
 
-NVDA dominates every profitability metric — 56% net margin, 73% ROIC, and only 15.5% of its gross profit consumed by overhead. The margin efficiency ranking is the most revealing number here. META has the highest gross margin at 82% but the worst efficiency: 51.9 percentage points are consumed between gross profit and net income, mostly by massive R&D and infrastructure spending on AI. AAPL's efficiency is second only to NVDA despite having the lowest gross margin in the group — Apple doesn't waste money between the lines.
+## What this tells us
+
+NVIDIA dominates every profitability metric: 56% net margin, 73% ROIC, and only 15.5 percentage points of overhead absorption. This reflects the economics of a semiconductor design company during a period of unprecedented demand for its products -- high pricing power, fabless manufacturing (NVIDIA designs chips but outsources fabrication), and massive operating leverage as revenue scales against a relatively fixed cost base.
+
+The overhead absorption ranking reveals structural differences that net margin alone obscures. Meta has the highest gross margin of any company in the group at 82%, yet it absorbs 51.9 percentage points between gross profit and net income -- the worst efficiency in the group. The gap is driven by massive capital expenditure on AI infrastructure and R&D, an investment strategy that compresses current profitability in pursuit of future capabilities.
+
+Apple presents the inverse pattern. It has the lowest gross margin in the group (46.9%) because hardware manufacturing carries higher cost of goods sold than software or advertising. However, Apple's overhead absorption is just 20 percentage points, second only to NVIDIA. Apple operates with exceptional cost discipline between the production line and the bottom line.
+
+## So what?
+
+Gross margin measures pricing power; the gross-to-net spread measures organizational efficiency. A company with high gross margin and high overhead absorption is spending aggressively, which may reflect either strategic investment (as in Meta's AI buildout) or structural inefficiency. When evaluating technology companies, examine the full margin waterfall rather than any single metric. Net margin alone does not distinguish between a company that earns less because its products command lower prices (AAPL) and one that earns less because it spends more between the gross and net lines (META).
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

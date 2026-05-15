@@ -1,6 +1,20 @@
 # How to Build a Multi-Factor Stock Screen in Python (Value + Momentum + Quality)
 
-Single-factor screens (just P/E, or just momentum) miss the full picture. Combining value, momentum, and quality into a composite score is what quantitative hedge funds have done since the 1990s. The idea: a cheap stock with strong momentum and high ROE is a better bet than a stock that's only cheap. Here's a simple 3-factor screen across 15 large caps.
+## What's the question?
+
+Can combining multiple investment factors into a single composite score produce better stock selection than relying on any single factor alone? Single-factor screens — ranking stocks by price-to-earnings ratio, or by trailing returns, or by profitability — each capture one dimension of a stock's attractiveness. But a stock that is cheap may be cheap for a reason (declining business), and a stock with strong momentum may be overvalued. Multi-factor models, widely used by quantitative hedge funds since the early 1990s, attempt to identify companies that score well across multiple independent dimensions simultaneously.
+
+## The approach
+
+We construct a three-factor composite score using value, momentum, and quality:
+
+- **Value** is measured by earnings yield (the inverse of the price-to-earnings ratio), where a higher yield indicates a cheaper stock relative to its earnings.
+- **Momentum** is the compounded 6-month total return, capturing the persistence of recent price trends.
+- **Quality** is measured by return on equity (ROE), defined as net income divided by shareholders' equity, which quantifies how effectively a company converts equity capital into profit.
+
+Each factor is z-score normalized across the universe of 15 stocks (subtract the mean, divide by the standard deviation) so that all three factors are on the same scale regardless of their native units. The composite score is the weighted average of the three z-scores, with approximately equal weighting: 33% value, 34% momentum, 33% quality. Stocks are ranked by the composite score from highest (most attractive across all three dimensions) to lowest.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -46,7 +60,7 @@ print(f"\nTop pick: {combined.index[0]} (composite={combined.iloc[0]['composite_
 print(f"Bottom:   {combined.index[-1]} (composite={combined.iloc[-1]['composite_score']:+.2f})")
 ```
 
-**Output:**
+## Output
 
 ```
 === 3-Factor Composite: Value + Momentum + Quality ===
@@ -72,6 +86,16 @@ Top pick: XOM (composite=+0.73)
 Bottom:   ABBV (composite=-1.67)
 ```
 
-XOM tops the composite ranking — not because it leads any single factor, but because it scores above average on all three: reasonable earnings yield (0.046), the strongest 6-month momentum (+26.6%), and positive ROE. This is the power of multi-factor screens: they surface stocks that are consistently good rather than extreme on one dimension. One caveat: AAPL's ROE of 1.519 (152%) looks extreme but it's real — Apple has deliberately shrunk its book equity to ~$62B through massive buybacks, so net income of $112B divided by a tiny equity base produces an inflated ROE. HD has the same dynamic at 110%. These aren't "quality" signals in the traditional sense — they're capital structure artifacts. A more robust quality factor would use ROIC instead. ABBV's last-place finish is driven by deeply negative ROE (-1.29, from negative equity post-Allergan), and MSFT scores poorly because its 6-month momentum is the worst in the group (-18.4%).
+## What this tells us
+
+XOM ranks first not because it leads any individual factor but because it scores above average on all three: reasonable earnings yield (0.046), the strongest 6-month momentum (+26.6%), and positive ROE. This illustrates the core principle of multi-factor investing — identifying stocks that are consistently above average rather than extreme on one dimension.
+
+Two important caveats emerge from the data. First, AAPL's ROE of 1.519 (152%) and HD's ROE of 1.105 (111%) are mathematically correct but economically misleading. Both companies have aggressively repurchased shares, reducing their book equity to very small amounts. When net income of $112B (AAPL) is divided by book equity of approximately $62B, the resulting ROE is inflated by capital structure decisions rather than operating performance. A more robust quality metric for companies with buyback-depleted equity would be return on invested capital (ROIC), which uses total capital (debt plus equity) as the denominator.
+
+Second, ABBV's last-place composite score (-1.67) is driven almost entirely by its negative ROE of -1.292, which results from negative shareholders' equity following the Allergan acquisition. This is an accounting artifact of acquisition accounting, not an indication of operating quality. MSFT scores poorly because its 6-month momentum is the weakest in the group at -18.4%, dragging its composite score down despite adequate value and quality metrics.
+
+## So what?
+
+Multi-factor screens are a starting point for analysis, not a finished investment process. The model presented here uses equal weighting and a small universe — both limitations that a production implementation would address. More critically, the ROE-based quality factor breaks down for companies with negative or near-zero book equity, which is increasingly common among large-cap companies with aggressive buyback programs. Practitioners should consider alternative quality metrics (ROIC, operating margin stability, accrual ratios) and test whether the composite score has predictive power out of sample before allocating capital based on the rankings.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

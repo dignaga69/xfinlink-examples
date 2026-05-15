@@ -1,6 +1,16 @@
 # How to Calculate Stock Beta and Correlation in Python
 
-Beta tells you how much a stock moves relative to the market — a beta of 2 means the stock moves roughly twice as much as the S&P 500 on any given day. It's the core metric for portfolio risk management and the capital asset pricing model (CAPM). Here's how to calculate beta, correlation, and annualized volatility for any stock using 3 years of daily returns.
+## What's the question?
+
+Beta is a measure of how sensitive a stock's returns are to movements in the overall market. A beta of 1.0 means the stock moves in lockstep with the market; a beta of 2.0 means it amplifies market moves by a factor of two; a beta near zero means the stock is largely indifferent to broad market conditions. Beta is the central parameter in the Capital Asset Pricing Model (CAPM), the foundational theory that relates expected return to systematic risk. Combined with correlation and volatility, beta quantifies both the direction and magnitude of a stock's relationship with the market. How do these measures differ across sectors, and what do they reveal about portfolio diversification?
+
+## The approach
+
+Beta is computed as the covariance of a stock's daily returns with the market's daily returns, divided by the variance of the market's returns. SPY (the SPDR S&P 500 ETF) serves as the market proxy. The correlation matrix shows the pairwise linear relationship between all stocks and the market, while annualized volatility and annualized return provide context for interpreting each stock's risk-return profile.
+
+Five stocks are selected to span a range of expected beta values: AAPL and NVDA (technology), XOM (energy), PG (consumer staples), and JPM (financials). Three years of daily returns are used to ensure a statistically meaningful sample.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -57,7 +67,7 @@ print(f"Highest beta: {highest_beta} ({beta_df.loc[highest_beta, 'beta']}) — m
 print(f"Lowest beta:  {lowest_beta} ({beta_df.loc[lowest_beta, 'beta']}) — most defensive")
 ```
 
-**Output:**
+## Output
 
 ```
 === Correlation Matrix (3Y Daily Returns) ===
@@ -82,6 +92,16 @@ Highest beta: NVDA (2.076) — most sensitive to market moves
 Lowest beta:  PG (0.151) — most defensive
 ```
 
-NVDA's beta of 2.08 means it amplifies market moves by roughly 2x — which explains both its 118% annualized return during the AI boom and its sharp drawdowns during selloffs. The most interesting number in the correlation matrix is the -0.158 between NVDA and PG: these two stocks are slightly negatively correlated, meaning they naturally hedge each other. PG's beta of 0.15 makes it the classic defensive position — near-zero market sensitivity, but also near-zero return over 3 years. XOM's low beta (0.30) and low correlation with tech (0.13 with AAPL, -0.04 with NVDA) confirms energy still acts as a diversifier in a tech-heavy portfolio.
+## What this tells us
+
+NVDA's beta of 2.08 confirms that it amplifies market movements by approximately two times, which is consistent with both its 118% annualized return during the AI-driven rally and the severity of its drawdowns during selloffs. Beta captures both sides of market sensitivity -- the upside and the downside are symmetric in expectation.
+
+The correlation matrix reveals the diversification structure of this portfolio. NVDA and PG have a correlation of -0.158, meaning they tend to move in opposite directions. This negative correlation makes them natural hedges for each other within a portfolio. XOM is also nearly uncorrelated with the technology stocks (0.126 with AAPL, -0.041 with NVDA), confirming that energy remains an effective diversifier against a tech-heavy allocation.
+
+PG's beta of 0.15 and correlation of 0.13 with SPY make it the most defensive stock in the group, with almost no systematic risk exposure. However, the cost of that defensiveness is visible in the near-zero annualized return (0.7% over three years).
+
+## So what?
+
+Beta is the starting point for portfolio construction because it quantifies how much market risk each position contributes. A portfolio with a weighted-average beta of 1.0 will track the market; shifting toward lower-beta stocks reduces drawdowns but sacrifices upside participation. The correlation matrix adds the diversification dimension: two stocks can both have high beta but still diversify each other if their correlation is low. When constructing a multi-asset portfolio, examine both beta (exposure to the market factor) and pairwise correlations (exposure to idiosyncratic co-movement) to achieve genuine diversification rather than simply holding multiple names that move together.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

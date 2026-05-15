@@ -1,6 +1,16 @@
 # How to Measure Earnings Quality: Cash Flow vs Net Income in Python
 
-Net income can be manipulated through accruals, depreciation timing, and one-time items. Operating cash flow can't — it's actual cash collected. The ratio of OCF to net income tells you how much of a company's reported earnings are backed by real cash. A ratio above 1.2 means cash earnings exceed paper earnings — high quality. Below 0.8 is a red flag.
+## What's the question?
+
+How much of a company's reported earnings are backed by actual cash? Net income — the bottom line of the income statement — is an accounting construct subject to management discretion. Revenue recognition timing, depreciation schedules, stock-based compensation treatment, and one-time items all influence the number. Operating cash flow (OCF), by contrast, measures cash actually collected and disbursed during the period. When cash flow significantly exceeds net income, earnings are considered high quality. When net income exceeds cash flow, the gap raises questions about the durability of reported profits.
+
+## The approach
+
+We calculate two ratios for each company. The first is the OCF-to-net-income ratio: operating cash flow divided by net income. A ratio above 1.0 means the company generates more cash than it reports in earnings. Above 1.2 is conventionally considered high quality; below 0.8 is a potential concern. The second is the accrual ratio: `(net income - operating cash flow) / revenue`. A negative accrual ratio indicates the company collects cash faster than it recognizes revenue — characteristic of subscription and prepaid business models. A positive accrual ratio means revenue is being recognized before cash arrives.
+
+We examine eight large-cap technology companies using the most recent annual filing data.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -29,7 +39,7 @@ for _, r in latest.iterrows():
     print(f"  {r['ticker']:5s}  NI={ni:>7s}  OCF={ocf:>7s}  OCF/NI={ratio:>5s}  accrual={acc:>7s}  {quality}")
 ```
 
-**Output:**
+## Output
 
 ```
 === Earnings Quality: Cash Flow vs Net Income ===
@@ -45,6 +55,18 @@ for _, r in latest.iterrows():
   NVDA   NI=  $120B  OCF=  $103B  OCF/NI= 0.86  accrual=  0.080
 ```
 
-CRM stands out at 2.11x — Salesforce generates more than twice as much cash as it reports in net income, largely because stock-based compensation is a real expense for earnings but not a cash outflow. META at 1.92x is similarly cash-rich, generating $116B in operating cash vs $60B in net income. The surprise is NVDA at 0.86x — the only stock below 1.0, and this isn't a one-off: NVDA's OCF has lagged net income every year for three years running (0.94 in FY2024, 0.88 in FY2025, 0.86 in FY2026). The gap is growing, likely because hyperscaler customers book massive GPU orders that sit in accounts receivable before converting to cash. It's not a red flag per se — NVDA's customers are creditworthy — but it means the headline earnings number overstates how much cash is actually in the bank. A negative accrual ratio (like META's -0.275) means the company is collecting cash faster than it recognizes revenue — the hallmark of a subscription business.
+## What this tells us
+
+CRM leads with an OCF-to-NI ratio of 2.11 — Salesforce generates more than twice as much cash as it reports in net income. The primary driver is stock-based compensation (SBC): SBC reduces net income as a real expense but is non-cash, so operating cash flow is unaffected. META at 1.92 exhibits the same pattern, producing $116B in operating cash against $60B in net income.
+
+AAPL sits at exactly 1.00, meaning its cash earnings match its reported earnings almost perfectly. This is unusual among technology companies and reflects Apple's hardware-heavy revenue model, which has fewer of the timing differences between cash collection and revenue recognition that inflate the ratio for subscription businesses.
+
+NVDA at 0.86 is the only company below 1.0 in this group. The gap between net income ($120B) and operating cash flow ($103B) is not an isolated occurrence — NVDA's OCF has trailed net income for three consecutive fiscal years (0.94 in FY2024, 0.88 in FY2025, 0.86 in FY2026), and the gap is widening. The likely cause is accounts receivable growth: hyperscaler customers place large GPU orders that are recognized as revenue before payment is received. The underlying credit risk is low given the customers involved, but the pattern means NVDA's headline earnings overstate how much cash is currently available.
+
+The accrual ratio adds context. META's deeply negative accrual ratio (-0.275) indicates it collects cash well ahead of revenue recognition, the hallmark of an advertising platform where customers prepay for campaigns.
+
+## So what?
+
+Earnings quality analysis is a standard step in fundamental due diligence. A high OCF-to-NI ratio does not automatically make a stock a good investment, and a ratio below 1.0 does not make it a bad one. What it does is reveal the cash content of reported earnings, which affects dividend sustainability, share buyback capacity, and the reliability of valuation multiples based on net income. When building financial models or comparing companies on a PE basis, adjusting for earnings quality ensures that comparisons are made on economically equivalent terms.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*

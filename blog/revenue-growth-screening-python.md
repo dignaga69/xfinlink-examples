@@ -1,6 +1,14 @@
 # How to Screen Tech Stocks by Revenue Growth in Python
 
-Revenue growth is the top-line signal that matters most for growth stocks — it tells you if the company is actually getting bigger, regardless of margin tricks or one-time gains. Screening by YoY revenue growth and comparing it to earnings growth reveals which companies are scaling profitably and which are growing at the expense of profitability.
+## What's the question?
+
+Revenue growth -- the year-over-year percentage change in total sales -- is the most direct measure of whether a business is expanding. Unlike earnings, which can increase through cost-cutting, asset disposals, or favorable accounting treatments, revenue growth reflects actual demand for a company's products and services. However, revenue growth in isolation is insufficient as an investment signal. A company can grow revenue rapidly while its earnings decline, either because it is investing aggressively in future capacity (strategic spending) or because its cost structure is deteriorating (margin erosion). Among ten large-cap technology companies, which are growing the fastest, and does that growth translate into proportionate earnings improvement?
+
+## The approach
+
+The two most recent annual periods for each company are retrieved from the xfinlink fundamentals endpoint, and year-over-year growth rates are computed for both revenue and net income. Comparing these two rates reveals three distinct operating patterns: profitable scaling (both metrics grow at similar rates), leveraged profitability (earnings growth substantially exceeds revenue growth, indicating margin expansion), and investment-phase growth (revenue grows while earnings contract, indicating heavy reinvestment). A "growth trap" flag identifies companies where revenue increased by more than 5% but net income declined -- a divergence that warrants investigation into whether the earnings pressure stems from strategic capital deployment or structural cost problems.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -62,7 +70,7 @@ else:
     print("  None found — all growers are also earning more")
 ```
 
-**Output:**
+## Output
 
 ```
 === Revenue Growth Ranking (YoY, Most Recent Annual) ===
@@ -81,6 +89,18 @@ else:
   META: revenue +22.2% but net income -3.1%
 ```
 
-NVDA leads with 65.5% revenue growth — and its earnings kept pace at +64.7%, showing the growth is real and profitable. PLTR is the outlier story: 56% revenue growth with 252% earnings growth, meaning it flipped from marginally profitable to highly profitable at scale. The one flag is META: revenue grew 22% but net income actually declined 3.1%, likely due to massive AI infrastructure spending. That's not necessarily bad — it might be strategic investment — but it's the kind of divergence a growth screen should catch.
+## What this tells us
 
-*Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*
+NVIDIA leads the ranking at 65.5% revenue growth with net income growing at a nearly identical 64.7%. This parallel movement indicates that the company is scaling without margin compression -- each incremental dollar of revenue contributes proportionately to earnings. This pattern is characteristic of a business with strong pricing power and a cost structure that scales efficiently with volume.
+
+Palantir demonstrates the most pronounced operating leverage in the group. Revenue grew 56.2% while net income expanded 251.6%, indicating that the company has crossed an inflection point where its largely fixed cost base (primarily engineering and sales personnel) absorbs incremental revenue at minimal marginal cost. This dynamic is typical of enterprise software businesses that reach sufficient scale to amortize their development costs across a growing customer base.
+
+Meta is the only company flagged by the growth trap screen. Revenue increased 22.2% while net income declined 3.1%, a divergence driven by substantial capital expenditure on AI infrastructure including data centers and custom silicon. Determining whether this represents a strategic investment with future returns or a structural margin decline requires monitoring whether the spending translates into revenue acceleration in subsequent periods.
+
+The remaining seven companies exhibit a mature growth profile in which earnings growth exceeds revenue growth. Alphabet, Amazon, Adobe, and Salesforce all demonstrate this margin expansion pattern, indicating improving operational efficiency at scale. Apple, though posting the lowest revenue growth at 6.4%, grew earnings at 19.5% -- a 3x ratio that reflects significant cost discipline and share buyback accretion.
+
+## So what?
+
+Revenue growth is most informative when evaluated alongside earnings growth as a quality filter. The ratio between the two -- sometimes termed operating leverage -- distinguishes companies where growth is accretive to profitability from those where it is dilutive. A company growing revenue at 20% with declining earnings is in a fundamentally different position than one growing revenue at 10% with earnings expanding at 30%. When constructing a growth screen, flag any company where revenue growth and earnings growth diverge materially, and investigate the underlying cause before interpreting the revenue figure as a positive signal.
+
+*Built with [xfinlink](https://xfinlink.com) -- free financial data API for Python. `pip install xfinlink`*

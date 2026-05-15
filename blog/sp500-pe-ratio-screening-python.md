@@ -1,6 +1,16 @@
 # How to Screen Blue-Chip Stocks by P/E Ratio in Python
 
-P/E ratio is the most-searched valuation metric for a reason — it's a quick sanity check on whether a stock is cheap or expensive relative to its earnings. Screening a basket of blue chips by P/E reveals which sectors the market is pricing for growth and which it considers mature. Here's how to pull and rank valuation ratios for 30 major companies in a few lines of Python.
+## What's the question?
+
+The price-to-earnings ratio (P/E) -- a stock's current price divided by its earnings per share -- is the most widely used valuation metric in equity analysis. A low P/E suggests the market expects modest future growth or is discounting near-term risk, while a high P/E implies the market is pricing in substantial earnings expansion. When applied across a diversified basket of blue-chip stocks, P/E screening reveals which sectors the market considers mature and which it values for growth. What does the valuation landscape look like across 30 major S&P 500 companies spanning all 11 GICS sectors?
+
+## The approach
+
+We retrieve the most recent annual valuation metrics for 30 blue-chip stocks selected to cover every GICS sector (Global Industry Classification Standard -- the standard sector taxonomy used by index providers). For each stock, we pull the P/E ratio, price-to-book ratio (P/B, which compares market price to accounting book value), and earnings yield (the inverse of P/E, expressed as a percentage).
+
+After filtering out companies with negative or missing P/E ratios -- which typically indicates a loss-making period and renders the metric uninterpretable -- we rank the universe from cheapest to most expensive. Summary statistics provide context for whether the current valuation regime is elevated relative to historical norms.
+
+## Code
 
 ```python
 import xfinlink as xfl
@@ -52,7 +62,7 @@ print(f"Min P/E:    {valid['pe_ratio'].min():.1f} ({valid.loc[valid['pe_ratio'].
 print(f"Max P/E:    {valid['pe_ratio'].max():.1f} ({valid.loc[valid['pe_ratio'].idxmax(), 'ticker']})")
 ```
 
-**Output:**
+## Output
 
 ```
 === 10 Cheapest Blue Chips by P/E Ratio ===
@@ -88,6 +98,16 @@ Min P/E:    13.8 (BAC)
 Max P/E:    85.9 (ABBV)
 ```
 
-Banks dominate the cheapest list — BAC, JPM, and GS all trade under 20x earnings, reflecting the market's persistent discount for financials. On the expensive end, ABBV's 86x P/E is misleading: their Humira patent cliff cratered near-term earnings, so the price reflects expected recovery. The median P/E of 28 for this blue-chip basket is above the long-run S&P average of ~20, consistent with an extended high-valuation regime.
+## What this tells us
+
+Banks dominate the cheapest end of the screen. BAC, JPM, and GS all trade below 20x earnings, reflecting a persistent market discount applied to financial sector earnings, which investors view as more cyclical and harder to forecast than other sectors. Energy companies (COP, XOM) and defensive staples (PG) also cluster in the low-P/E range.
+
+At the expensive end, ABBV's 86x P/E requires careful interpretation. AbbVie's near-term earnings were compressed by the Humira patent cliff -- the expiration of exclusivity on its best-selling drug -- so the elevated ratio reflects the market pricing in an earnings recovery rather than overvaluation in the conventional sense. Its negative P/B ratio (driven by negative book value from acquisition goodwill write-downs) reinforces that this is a company where headline ratios must be read in context.
+
+The median P/E of 28.1 for this blue-chip basket exceeds the long-run S&P 500 average of approximately 20x, consistent with an extended period of elevated equity valuations.
+
+## So what?
+
+P/E is a useful first-pass filter, but it requires context to be actionable. A low P/E can indicate genuine undervaluation, or it can reflect justified skepticism about future earnings (a value trap). A high P/E can signal overvaluation, or it can reflect temporary earnings compression that the market expects to reverse. The productive next step after a P/E screen is to examine the earnings trajectory: is the P/E high because the price is elevated, or because the E is temporarily depressed? Combining P/E with earnings yield and earnings growth rate converts a simple ranking into a defensible investment thesis.
 
 *Built with [xfinlink](https://xfinlink.com) — free financial data API for Python. `pip install xfinlink`*
