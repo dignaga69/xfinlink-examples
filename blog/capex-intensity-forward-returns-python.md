@@ -18,10 +18,10 @@ See [`capex-intensity-forward-returns-python.py`](capex-intensity-forward-return
 === Capex Intensity: Who Is Investing the Most? (Latest Annual) ===
 Ticker        Period     Revenue       Capex   Intensity   Capex YoY
 -----------------------------------------------------------------
+META      2025-12-31  $     201B  $      70B       34.7%     +87.1%
 MSFT      2025-06-30  $     282B  $      65B       22.9%     +45.1%
 AMZN      2025-12-31  $     717B  $     132B       18.4%     +58.8%
 XOM       2025-12-31  $     332B  $      28B        8.5%     +16.7%
-META      2025-12-31  $     201B  $       9B        4.6%     -75.0%
 CAT       2025-12-31  $      68B  $       3B        4.2%     +41.9%
 AAPL      2025-09-27  $     416B  $      13B        3.1%     +34.6%
 HD        2026-02-01  $     165B  $       4B        2.2%      +5.6%
@@ -37,16 +37,16 @@ UNH       2025-12-31  $     448B  $       4B        0.8%      +3.5%
   2022-12-31  capex=$31B  intensity=27.0%  YoY=+68.2%
   2023-12-31  capex=$27B  intensity=20.0%  YoY=-14.0%
   2024-12-31  capex=$37B  intensity=22.6%  YoY=+37.8%
-  2025-12-31  capex=$9B  intensity=4.6%  YoY=-75.0%
+  2025-12-31  capex=$70B  intensity=34.7%  YoY=+87.1%
 ```
 
 ## What this tells us
 
-MSFT and AMZN are the heaviest investors relative to revenue -- both above 18% capex intensity, driven by AI data center buildouts. AMZN's trajectory is striking: capex nearly tripled from $53B to $132B in two years, pushing intensity from 9.2% to 18.4%. This is among the most aggressive capital investment programs in corporate history. META's trajectory tells a different story: after spending heavily on metaverse infrastructure (27% intensity in 2022), capex dropped 75% in 2025 to $9B -- a strategic pivot from capital-heavy VR investment back toward asset-light social media. UNH at 0.8% intensity confirms that health insurance is essentially a capital-free business model.
+META is the heaviest investor relative to revenue at 34.7% capex intensity -- nearly doubling capex from $37B to $70B in a single year (+87% YoY), driven by AI infrastructure buildout. MSFT and AMZN follow at 22.9% and 18.4% respectively. AMZN's trajectory is equally striking: capex nearly tripled from $53B to $132B in two years, pushing intensity from 9.2% to 18.4%. META's trajectory shows a clear inflection: after pulling back from peak metaverse spending (27% intensity in 2022) to $27B in 2023, capex re-accelerated sharply -- $37B in 2024, then $70B in 2025 -- as the company pivoted its capital strategy toward AI data centers. Both AMZN and META are now in aggressive capex expansion mode, with META's acceleration even steeper. UNH at 0.8% intensity confirms that health insurance is essentially a capital-free business model.
 
 ## So what?
 
-Capex intensity is not inherently good or bad for shareholders -- the question is whether the investment earns above its cost of capital. AMZN's 59% YoY capex growth is a bet that AI infrastructure will generate returns exceeding its roughly 12% cost of equity. If it does, the stock is undervalued at current levels because the market is discounting future earnings that have not yet materialized. If it does not, the excess capex becomes a drag on free cash flow and the stock reprices lower. Monitor the ratio of capex intensity to revenue growth: when capex grows faster than revenue for multiple consecutive years, the company is either building future capacity (bullish) or overinvesting (bearish). The distinction depends on whether new capacity translates to incremental revenue.
+Capex intensity is not inherently good or bad for shareholders -- the question is whether the investment earns above its cost of capital. META and AMZN together spent $202B on capex in 2025 -- an unprecedented combined bet on AI infrastructure. META's 87% YoY capex surge and AMZN's 59% growth are wagers that AI compute capacity will generate returns exceeding their roughly 12% cost of equity. If it does, these stocks are undervalued at current levels because the market is discounting future earnings that have not yet materialized. If it does not, the excess capex becomes a drag on free cash flow and the stocks reprice lower. Monitor the ratio of capex intensity to revenue growth: when capex grows faster than revenue for multiple consecutive years, the company is either building future capacity (bullish) or overinvesting (bearish). The distinction depends on whether new capacity translates to incremental revenue.
 
 ---
 
